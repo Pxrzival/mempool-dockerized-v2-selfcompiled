@@ -1,0 +1,7 @@
+bitcoin_data/
+lnd_data/
+elements_data/
+electrs_data/
+data/
+mysql/
+lnbits_data/

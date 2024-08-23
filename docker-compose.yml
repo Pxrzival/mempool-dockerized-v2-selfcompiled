@@ -1,0 +1,220 @@
+services:
+
+# Mempool frontend container
+  web:
+    container_name: web
+    environment:
+      FRONTEND_HTTP_PORT: ${FRONTEND_HTTP_PORT}
+      BACKEND_MAINNET_HTTP_HOST: "api"
+      LIGHTNING: true
+      LIQUID_ENABLED: true
+    image: mempool/frontend:latest
+    user: root
+    restart: on-failure
+    stop_grace_period: 1m
+    command: "./wait-for db:3306 --timeout=720 -- nginx -g 'daemon off;'"
+    ports:
+      - ${FRONTEND_HTTP_PORT}:8080
+    depends_on:
+      - bitcoind
+      - lnd
+      - electrs
+      - elements
+    networks:
+      bitcoin:
+        ipv4_address: ${SUBNET_ADDR}.6
+
+#Mempool api for all the different queries
+  api:
+    container_name: api
+    environment:
+      MEMPOOL_BACKEND: "electrum"
+      CORE_RPC_HOST: "${SUBNET_ADDR}.3"
+      CORE_RPC_PORT: "8332"
+      CORE_RPC_COOKIE: "true"
+      CORE_RPC_COOKIE_PATH: "/root/.bitcoin/.cookie"
+      DATABASE_ENABLED: "true"
+      DATABASE_HOST: "${SUBNET_ADDR}.4"
+      DATABASE_DATABASE: ${DB_DATABASE}
+      DATABASE_USERNAME: ${DB_USER}
+      DATABASE_PASSWORD: ${DB_PASS}
+      STATISTICS_ENABLED: "true"
+      ELECTRUM_HOST: "${SUBNET_ADDR}.2"
+      ELECTRUM_PORT: "50001"
+      ELECTRUM_TLS_ENABLED: "false"
+      MEMPOOL_POOLS_JSON_URL: "https://raw.githubusercontent.com/mempool/mining-pools/master/pools-v2.json"
+      MEMPOOL_POOLS_JSON_TREE_URL: "https://api.github.com/repos/mempool/mining-pools/git/trees/master"
+      MEMPOOL_INDEXING_BLOCKS_AMOUNT: "true"
+      MEMPOOL_BLOCKS_REINDEXING: "true"
+      MEMPOOL_CPFP_INDEXING: "true"
+      LIGHTNING_ENABLED: "true"
+      LIGHTNING_BACKEND: "lnd"
+      LIGHTNING_TOPOLOGY_FOLDER: "/root/.lnd"
+      LIGHTNING_STATS_REFRESH_INTERVAL: 600
+      LIGHTNING_GRAPH_REFRESH_INTERVAL: 600
+      LIGHTNING_LOGGER_UPDATE_INTERVAL: 30
+      LND_TLS_CERT_PATH: "/root/.lnd/tls.cert"
+      LND_MACAROON_PATH: "/root/.lnd/data/chain/bitcoin/mainnet/readonly.macaroon"
+      LND_REST_API_URL: "https://${SUBNET_ADDR}.8:8080"
+      LND_TIMEOUT: 1000
+    
+    image: mempool/backend:latest
+    user: root
+    restart: on-failure
+    stop_grace_period: 1m
+    command: "./wait-for-it.sh db:3306 --timeout=720 --strict -- ./start.sh"
+    volumes:
+      - ./data:/backend/cache
+      - ./bitcoin_data:/root/.bitcoin
+      - ./lnd_data:/root/.lnd
+    depends_on:
+      - bitcoind
+      - lnd
+      - electrs
+      - elements
+    networks:
+      bitcoin:
+        ipv4_address: ${SUBNET_ADDR}.5
+
+# Database used for statistics like past hashrate 
+  db:
+    container_name: db
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASS}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASS}
+    image: mariadb:10.5.21
+    user: root
+    restart: on-failure
+    stop_grace_period: 1m
+    volumes:
+      - ./mysql:/var/lib/mysql
+    networks:
+      bitcoin:
+        ipv4_address: ${SUBNET_ADDR}.4
+  
+# Bitcoind daemon adjusted for this usecase (no GUI)
+  bitcoind:
+    container_name: bitcoind
+    build:
+      context: ./Dockerfiles
+      dockerfile: Bitcoin.Dockerfile
+    user: root
+    volumes:
+      - ./bitcoin_data:/root/.bitcoin/
+      - ./bitcoin.conf:/root/.bitcoin/bitcoin.conf
+    restart: on-failure
+    stop_grace_period: 15m30s
+    networks:
+      bitcoin:
+        ipv4_address: ${SUBNET_ADDR}.3
+
+# Electrs server by romanz within a container - used for wallet queries
+  electrs:
+    container_name: electrs
+    environment:
+      - ELECTRS_DB_DIR=/root/db
+      - ELECTRS_ELECTRUM_RPC_ADDR=${SUBNET_ADDR}.2:50001
+      - ELECTRS_DAEMON_RPC_ADDR=${SUBNET_ADDR}.3:8332
+      - ELECTRS_DAEMON_P2P_ADDR=${SUBNET_ADDR}.3:8333
+      - ELECTRS_DAEMON_DIR=/root/.bitcoin/
+      - ELECTRS_COOKIE_FILE=/root/.bitcoin/.cookie
+      - ELECTRS_MONITORING_ADDR=${SUBNET_ADDR}.2:4224
+      - ELECTRS_LOG_FILTERS=INFO
+      - ELECTRS_NETWORK=bitcoin
+    build:
+      context: ./Dockerfiles
+      dockerfile: Electrs.Dockerfile
+    restart: on-failure
+    user: root
+    ports:
+      - 50001:50001
+    entrypoint:
+      /usr/bin/electrs
+    volumes:
+      - ./electrs_data:/root/db
+      - ./bitcoin_data:/root/.bitcoin:ro
+    depends_on:
+      - bitcoind
+    networks:
+      bitcoin:
+        ipv4_address: ${SUBNET_ADDR}.2
+
+# LND daemon for an LN-network overview within mempool
+  lnd:
+    container_name: lnd
+    build:
+      context: ./Dockerfiles
+      dockerfile: LND.Dockerfile
+    ports:
+      - 8989:8989
+    volumes:
+      - ./lnd_data:/root/.lnd
+      - ./lnd.conf:/root/.lnd/lnd.conf
+      - ./bitcoin_data:/root/.bitcoin
+      - ./.lndpass:/root/.lnd/.pw/.lndpass
+    user: root
+    restart: on-failure
+    depends_on:
+      - bitcoind
+    networks:
+      bitcoin:
+        ipv4_address: ${SUBNET_ADDR}.8
+
+# Elements daemon for the liquid sidechain
+  elements:
+    container_name: elements
+    build:
+      context: ./Dockerfiles
+      dockerfile: Elements.Dockerfile
+    user: root
+    volumes:
+      - ./elements_data:/root/.elements/
+      - ./elements.conf:/root/.elements/elements.conf
+    restart: on-failure
+    depends_on:
+      - bitcoind
+    networks:
+      bitcoin:
+        ipv4_address: ${SUBNET_ADDR}.7
+
+# LNBits for configuration and use of your LND Node
+  lnbits:
+    container_name: lnbits
+    build:
+      context: ./Dockerfiles
+      dockerfile: LNBits.Dockerfile
+    user: root
+    ports:
+      - 5000:5000
+    volumes:
+      - ./lnbits.env:/app/.env
+      - ./lnbits_data:/app/data
+      - ./lnd_data:/root/.lnd/
+    restart: on-failure
+    depends_on:
+      - bitcoind
+      - lnd
+    networks:
+      bitcoin:
+        ipv4_address: ${SUBNET_ADDR}.9
+
+
+volumes:
+  bitcoin_data:
+  mysql:
+  electrs_data:
+  lnd_data:
+  elements_data:
+  lnbits_data:
+
+
+networks:
+  bitcoin:
+    driver: bridge
+    enable_ipv6: false
+    ipam:
+      driver: default
+      config:
+        - subnet: ${SUBNET_ADDR}.0/24
