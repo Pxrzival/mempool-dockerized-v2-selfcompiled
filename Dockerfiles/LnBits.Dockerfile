@@ -30,7 +30,7 @@ RUN apt-get update && apt-get -y upgrade && \
     sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list' && \
     curl -s https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - && \
     apt-get update && \
-    apt-get -y install postgresql-client-14 postgresql-client-common && \
+    apt-get -y install postgresql-client-14 postgresql-client-common git && \
     apt-get clean all && rm -rf /var/lib/apt/lists/*
 
 RUN curl -sSL https://install.python-poetry.org | python3 -
@@ -42,9 +42,10 @@ ENV POETRY_NO_INTERACTION=1 \
     VIRTUAL_ENV=/app/.venv \
     PATH="/app/.venv/bin:$PATH"
 
+RUN git clone --recurse-submodules https://github.com/lnbits/lnbits.git /app
+
 WORKDIR /app
 
-COPY . .
 COPY --from=builder /app/.venv .venv
 
 RUN poetry install --only main
