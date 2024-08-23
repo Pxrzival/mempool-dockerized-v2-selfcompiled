@@ -11,8 +11,7 @@ RUN git clone https://github.com/lnbits/lnbits.git /app
 
 WORKDIR /app
 
-# Only copy the files required to install the dependencies
-COPY pyproject.toml poetry.lock ./
+# Only copy the files required to install the dependencie
 
 RUN mkdir data
 
