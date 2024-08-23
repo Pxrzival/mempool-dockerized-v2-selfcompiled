@@ -184,7 +184,7 @@ services:
     container_name: lnbits
     build:
       context: ./Dockerfiles
-      dockerfile: LNBits.Dockerfile
+      dockerfile: LnBits.Dockerfile
     user: root
     ports:
       - 5000:5000

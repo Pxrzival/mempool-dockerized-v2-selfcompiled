@@ -3,6 +3,7 @@ FROM debian:bookworm-slim AS builder
 
 # Install dependencies for building
 RUN apt-get update && apt-get install -y --no-install-recommends \
+	ca-certificates \
         build-essential \
         autoconf \
         automake \
