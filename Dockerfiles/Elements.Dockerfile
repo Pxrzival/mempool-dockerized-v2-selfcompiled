@@ -22,9 +22,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 #    rm -rf /var/lib/apt/lists/*
 
 # Clone repository and set working directory
-COPY . /elements
+RUN git clone --recurse-submodules --depth=1 https://github.com/ElementsProject/elements.git
 
-WORKDIR /elements
+WORKDIR elements/
 
 # Set build flags
 #ENV LDFLAGS="-L/usr/lib"
