@@ -200,6 +200,41 @@ services:
       bitcoin:
         ipv4_address: ${SUBNET_ADDR}.9
 
+# Thunderhub LN Interface to manage LND
+  thunderhub:
+    container_name: thunderhub
+    build:
+      context: ./Dockerfiles
+      dockerfile: Thunderhub.Dockerfile
+    user: root
+    depends_on:
+      - bitcoind
+      - lnd
+    ports:
+      - 3000:3000
+    restart: on-failure
+    stop_signal: SIGKILL
+    environment:
+      NO_VERSION_CHECK: "true"
+      COOKIE_PATH: "/data/.cookie"
+      ACCOUNT_CONFIG_PATH: "/data/thubConfig.yaml"
+      SSO_SERVER_URL: "172.21.0.8:10009"
+      SSO_MACAROON_PATH: "/root/.lnd"
+      SSO_CERT_PATH: "/root/.lnd/tls.cert"
+      NO_CLIENT_ACCOUNTS: "true"
+      LOG_LEVEL: debug
+      LOGOUT_URL: "/server/services/thunderhub/BTC"
+      TOR_PROXY_SERVER: socks://tor:9050
+    #labels:
+      #traefik.enable: "true"
+      #traefik.http.routers.bitcoin_thub.rule: Host(`${BTCPAY_HOST}`) && (Path(`/thub`) || PathPrefix(`/thub/`))
+    volumes:
+    - "lnd_data:/root/.lnd"
+    - "thunderhub_data:/data"
+    networks:
+      bitcoin:
+        ipv4_address: ${SUBNET_ADDR}.10
+
 
 volumes:
   bitcoin_data:
@@ -208,6 +243,7 @@ volumes:
   lnd_data:
   elements_data:
   lnbits_data:
+  thunderhub_data:
 
 
 networks:
