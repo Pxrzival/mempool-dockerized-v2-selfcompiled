@@ -219,7 +219,7 @@ services:
       COOKIE_PATH: "/data/.cookie"
       ACCOUNT_CONFIG_PATH: "/data/thubConfig.yaml"
       SSO_SERVER_URL: "172.21.0.8:10009"
-      SSO_MACAROON_PATH: "/root/.lnd/data/chain/bitcoin/mainnet/"
+      SSO_MACAROON_PATH: "/root/.lnd/data/chain/bitcoin/mainnet"
       SSO_CERT_PATH: "/root/.lnd/tls.cert"
       NO_CLIENT_ACCOUNTS: "true"
       LOG_LEVEL: debug
