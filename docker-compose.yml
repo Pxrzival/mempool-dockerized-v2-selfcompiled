@@ -219,8 +219,8 @@ services:
       COOKIE_PATH: /data/.cookie
       ACCOUNT_CONFIG_PATH: /data/thubConfig.yaml
       SSO_SERVER_URL: 172.21.0.8:10009
-      SSO_MACAROON_PATH: /root/.lnd/data/chain/bitcoin/mainnet
-      SSO_CERT_PATH: /root/.lnd/tls.cert
+      SSO_MACAROON_PATH: /data/lnd/data/chain/bitcoin/mainnet
+      SSO_CERT_PATH: /data/lnd/tls.cert
       NO_CLIENT_ACCOUNTS: true
       LOG_LEVEL: debug
 #      LOGOUT_URL: "/server/services/thunderhub/BTC"
@@ -229,10 +229,10 @@ services:
       #traefik.enable: "true"
       #traefik.http.routers.bitcoin_thub.rule: Host(`${BTCPAY_HOST}`) && (Path(`/thub`) || PathPrefix(`/thub/`))
     volumes:
-    - lnd_data:/root/.lnd
+    - lnd_data:/data/lnd
     - thunderhub_data:/data
-    - lnd_data/tls.cert:/root/.lnd/tls.cert
-    - lnd_data/data/chain/bitcoin/mainnet/admin.macaroon:/root/.lnd/data/chain/bitcoin/mainnet/admin.macaroon
+#    - lnd_data/tls.cert:/root/.lnd/tls.cert
+#    - lnd_data/data/chain/bitcoin/mainnet/admin.macaroon:/root/.lnd/data/chain/bitcoin/mainnet/admin.macaroon
     networks:
       bitcoin:
         ipv4_address: ${SUBNET_ADDR}.10

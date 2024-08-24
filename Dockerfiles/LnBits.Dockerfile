@@ -42,7 +42,7 @@ ENV POETRY_NO_INTERACTION=1 \
     VIRTUAL_ENV=/app/.venv \
     PATH="/app/.venv/bin:$PATH"
 
-RUN git clone --recurse-submodules https://github.com/lnbits/lnbits.git /app
+RUN git clone https://github.com/lnbits/lnbits.git /app
 
 WORKDIR /app
 
