@@ -256,8 +256,8 @@ services:
 
   bitcoindmon:
     build:
-    context: ./Dockerfiles
-    dockerfile: BitcoinExporter.Dockerfile
+      context: ./Dockerfiles
+      dockerfile: BitcoinExporter.Dockerfile
     ports:
       - 9999:9999
     environment:
