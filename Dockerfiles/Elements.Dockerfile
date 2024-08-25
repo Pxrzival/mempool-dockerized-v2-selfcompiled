@@ -71,4 +71,4 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 COPY --from=builder /usr/local/bin/* /usr/local/bin/
 
 # Default command to run the binary
-ENTRYPOINT ["/usr/local/bin/elementsd", "-chain=liquidv1", "-print-to-console"]
+ENTRYPOINT ["/usr/local/bin/elementsd", "-chain=liquidv1"]

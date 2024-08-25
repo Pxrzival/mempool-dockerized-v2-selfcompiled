@@ -4,10 +4,12 @@ services:
   web:
     container_name: web
     environment:
-      FRONTEND_HTTP_PORT: ${FRONTEND_HTTP_PORT}
+      FRONTEND_HTTP_PORT: 8080
       BACKEND_MAINNET_HTTP_HOST: "api"
       LIGHTNING: true
       LIQUID_ENABLED: true
+      MEMPOOL_WEBSITE_URL: https://mempool.hiemercloud.de
+      LIQUID_WEBSITE_URL: https://liquid.hiemercloud.de
     image: mempool/frontend:latest
     user: root
     restart: on-failure
