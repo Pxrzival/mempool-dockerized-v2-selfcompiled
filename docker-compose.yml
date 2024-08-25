@@ -225,8 +225,8 @@ services:
       LOG_LEVEL: debug
 #      LOGOUT_URL: "/server/services/thunderhub/BTC"
 #      TOR_PROXY_SERVER: socks://tor:9050
-    #labels:
-      #traefik.enable: "true"
+    labels:
+      traefik.enable: "true"
       #traefik.http.routers.bitcoin_thub.rule: Host(`${BTCPAY_HOST}`) && (Path(`/thub`) || PathPrefix(`/thub/`))
     volumes:
     - ./lnd_data:/data/lnd
