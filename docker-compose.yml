@@ -240,6 +240,7 @@ services:
         ipv4_address: ${SUBNET_ADDR}.10
 
   lndmon:
+    container_name: lndmon
     build:
       context: ./Dockerfiles
       dockerfile: LNDmon.Dockerfile
@@ -255,6 +256,7 @@ services:
         ipv4_address: ${SUBNET_ADDR}.11
 
   bitcoindmon:
+    container_name: bitcoindmon
     build:
       context: ./Dockerfiles
       dockerfile: BitcoinExporter.Dockerfile
