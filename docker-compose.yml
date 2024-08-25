@@ -242,7 +242,7 @@ services:
   lndmon:
     build:
       context: ./Dockerfiles
-      dockerfile: lndmon.Dockerfile
+      dockerfile: LNDmon.Dockerfile
     ports: 
       - 9092:9092
     restart: always
