@@ -28,8 +28,6 @@ WORKDIR /elements
 RUN ./autogen.sh && \
     ./configure \
         --without-gui \
-        --disable-upnp-default \
-        --disable-natpmp \
         --disable-wallet \
         --disable-ccache \
         --disable-dependency-tracking \
