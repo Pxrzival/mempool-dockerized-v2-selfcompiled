@@ -264,7 +264,7 @@ services:
       - 9999:9999
     environment:
       - RPC_ADDRESS=${SUBNET_ADDR}.3:8332
-      - RPC_COOKIEFILE=/root/.bitcoin/.cookie
+      - RPC_COOKIEFILE="/root/.bitcoin/.cookie"
       - ZMQ_ADDRESS=${SUBNET_ADDR}.3:28333
     restart: always
     volumes:
