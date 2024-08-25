@@ -252,7 +252,7 @@ services:
     command: --prometheus.listenaddr=0.0.0.0:9092 --lnd.network=$LND_NETWORK --lnd.host=${SUBNET_ADDR}.8 --lnd.macaroondir=/root/.lnd/data/chain/bitcoin/mainnet/ --lnd.tlspath=/root/.lnd/tls.cert
     networks:
       bitcoin:
-        ipv4_address: ${SUBNET_ADDR}.10
+        ipv4_address: ${SUBNET_ADDR}.11
 
   bitcoindmon:
     build:
@@ -267,7 +267,9 @@ services:
     restart: always
     volumes:
       - ./bitcoin_data/.cookie:/root/.bitcoin/.cookie
-
+    networks:
+      bitcoin:
+        ipv4_address: ${SUBNET_ADDR}.12
 
 volumes:
   bitcoin_data:
