@@ -6,3 +6,4 @@ data/
 mysql/
 lnbits_data/
 thunderhub_data/
+build.sh
