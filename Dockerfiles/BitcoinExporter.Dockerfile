@@ -1,5 +1,7 @@
 # Use an Alpine image as the base
-FROM alpine:3.18 AS builder
+FROM golang:1.23-alpine3.20 AS builder
+
+ARG arch=linux-x64
 
 # Install necessary packages for building and running the project
 RUN apk update && apk add --no-cache \
@@ -10,12 +12,12 @@ RUN apk update && apk add --no-cache \
     curl
 
     # Install Go 1.22 manually
-RUN curl -OL https://go.dev/dl/go1.22.0.linux-amd64.tar.gz && \
-tar -C /usr/local -xzf go1.22.0.linux-amd64.tar.gz && \
-rm go1.22.0.linux-amd64.tar.gz
+#RUN curl -OL https://go.dev/dl/go1.22.0.linux-${arch}.tar.gz && \
+#    tar -C /usr/local -xzf go1.22.0.linux-${arch}.tar.gz && \
+#    rm go1.22.0.linux-${arch}.tar.gz
 
 # Set Go environment variables
-ENV PATH="/usr/local/go/bin:$PATH"
+#ENV PATH="/usr/local/go/bin:$PATH"
 
 # Set the working directory
 WORKDIR /app
