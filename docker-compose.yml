@@ -233,7 +233,7 @@ services:
     volumes:
     - ./lnd_data:/data/lnd
     - ./thunderhub_data:/data
-    - ./thubConfig.yml:/data/thubConfig.yml
+    - ./thubConfig.yaml:/data/thubConfig.yaml
 #    - ./lnd_data/tls.cert:/data/lnd/tls.cert
 #    - lnd_data/data/chain/bitcoin/mainnet/admin.macaroon:/data/lnd/data/chain/bitcoin/mainnet/admin.macaroon
     networks:
