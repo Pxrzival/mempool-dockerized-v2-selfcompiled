@@ -234,8 +234,6 @@ services:
     - ./lnd_data:/data/lnd
     - ./thunderhub_data:/data
     - ./thubConfig.yaml:/data/thubConfig.yaml
-#    - ./lnd_data/tls.cert:/data/lnd/tls.cert
-#    - lnd_data/data/chain/bitcoin/mainnet/admin.macaroon:/data/lnd/data/chain/bitcoin/mainnet/admin.macaroon
     networks:
       bitcoin:
         ipv4_address: ${SUBNET_ADDR}.10
@@ -267,6 +265,7 @@ services:
       dockerfile: BitcoinExporter.Dockerfile
     ports:
       - 9999:9999
+      - 3001:3000
     environment:
       - RPC_ADDRESS=${SUBNET_ADDR}.3:8332
       - RPC_COOKIEFILE=/root/.bitcoin/.cookie
