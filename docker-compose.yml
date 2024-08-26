@@ -247,8 +247,12 @@ services:
     ports: 
       - 9092:9092
     restart: always
+    depends_on:
+      - lnd
+      - bitcoind
+      - lnbits
     volumes:
-      - ./lnd_data/tls.cert:/root/.lnd/tls.cert
+#      - ./lnd_data/tls.cert:/root/.lnd/tls.cert
       - ./lnd_data:/root/.lnd/
     command: --prometheus.listenaddr=0.0.0.0:9092 --lnd.network=$LND_NETWORK --lnd.host=${SUBNET_ADDR}.8 --lnd.macaroondir=/root/.lnd/data/chain/bitcoin/mainnet/ --lnd.tlspath=/root/.lnd/tls.cert
     networks:
