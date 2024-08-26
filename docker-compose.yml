@@ -270,7 +270,7 @@ services:
     volumes:
       - ./bitcoin_data:/root/.bitcoin   
     depends_on:
-      -bitcoind         
+      - bitcoind         
     networks:
       bitcoin:
         ipv4_address: ${SUBNET_ADDR}.12
