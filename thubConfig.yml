@@ -1,0 +1,7 @@
+masterPassword: 'mempool' # Default password unless defined in account
+accounts:
+  - name: 'Account 1'
+    serverUrl: '172.21.0.8:10009'
+    macaroonPath: '/data/lnd/data/chain/bitcoin/mainnet/admin.macaroon'
+    certificatePath: '/data/lnd/tls.cert'
+    password: 'mempool'
