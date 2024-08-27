@@ -279,6 +279,25 @@ services:
     networks:
       bitcoin:
         ipv4_address: ${SUBNET_ADDR}.12
+  
+  spekter-desktop:
+    container_name: spekter
+    build:
+      context: ./Dockerfiles/
+      dockerfile: Specter-Desktop.Dockerfile
+    ports:
+      - 25441:25441
+      - 25442:25442
+      - 25443:25443
+    user: root
+    volumes:
+      - ./bitcoind_data:/root/.bitcoin
+    depends_on:
+      - bitcoind
+    restart: always
+    networks:
+      bitcoin:
+        ipv4_address: ${SUBNET_ADDR}.13
 
 volumes:
   bitcoin_data:
