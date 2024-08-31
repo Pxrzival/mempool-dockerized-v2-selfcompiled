@@ -37,9 +37,9 @@ services:
       CORE_RPC_COOKIE_PATH: "/root/.bitcoin/.cookie"
       DATABASE_ENABLED: "true"
       DATABASE_HOST: "${SUBNET_ADDR}.4"
-      DATABASE_DATABASE: ${DB_DATABASE}
-      DATABASE_USERNAME: ${DB_USER}
-      DATABASE_PASSWORD: ${DB_PASS}
+      DATABASE_DATABASE: "${DB_DATABASE}"
+      DATABASE_USERNAME: "${DB_USER}"
+      DATABASE_PASSWORD: "${DB_PASS}"
       STATISTICS_ENABLED: "true"
       ELECTRUM_HOST: "${SUBNET_ADDR}.2"
       ELECTRUM_PORT: "50001"
@@ -82,10 +82,10 @@ services:
   db:
     container_name: db
     environment:
-      MYSQL_DATABASE: ${DB_DATABASE}
-      MYSQL_USER: ${DB_USER}
-      MYSQL_PASSWORD: ${DB_PASS}
-      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASS}
+      MYSQL_DATABASE: "${DB_DATABASE}"
+      MYSQL_USER: "${DB_USER}"
+      MYSQL_PASSWORD: "${DB_PASS}"
+      MYSQL_ROOT_PASSWORD: "${DB_ROOT_PASS}"
     image: mariadb:10.5.21
     user: root
     restart: on-failure
