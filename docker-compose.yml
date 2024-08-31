@@ -74,6 +74,7 @@ services:
       - lnd
       - electrs
       - elements
+      - db
     networks:
       bitcoin:
         ipv4_address: ${SUBNET_ADDR}.5
@@ -291,7 +292,7 @@ services:
       - 25443:25443
     user: root
     volumes:
-      - ./bitcoind_data:/root/.bitcoin
+      - ./bitcoin_data:/root/.bitcoin
     depends_on:
       - bitcoind
     restart: always
