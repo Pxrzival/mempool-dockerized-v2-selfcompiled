@@ -20,7 +20,7 @@ WORKDIR /
 
 WORKDIR /specter-desktop
 
-RUN git clone https://github.com/pxrzival/specter-desktop.git .
+RUN git clone https://github.com/cryptoadvance/specter-desktop.git .
 
 RUN pip3 install --upgrade pip
 RUN pip3 install babel cryptography
