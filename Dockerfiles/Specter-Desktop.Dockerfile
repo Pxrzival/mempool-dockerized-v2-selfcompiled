@@ -14,45 +14,51 @@ FROM python:3.10-slim-bullseye AS builder
 ARG VERSION
 ARG REPO
 
-RUN apt update && apt install -y git build-essential libusb-1.0-0-dev libudev-dev libffi-dev libssl-dev rustc cargo libpq-dev git ca-certificates
-
-WORKDIR /
+# Install system dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    git build-essential libusb-1.0-0-dev libudev-dev libffi-dev libssl-dev rustc cargo libpq-dev ca-certificates \
+ && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /specter-desktop
 
-RUN git clone https://github.com/cryptoadvance/specter-desktop.git .
+# Clone the repository that contains requirements.in and requirements.txt
+RUN git clone https://github.com/cryptoadvance/specter-desktop.git . 
 
-RUN pip3 install --upgrade pip
-RUN pip3 install babel cryptography
-RUN pip3 install .
+# Upgrade pip
+RUN pip3 install --no-cache-dir --upgrade pip
 
+# First, install pinned dependencies from requirements.txt
+# Assuming requirements.txt is already in the repo
+RUN pip3 install --no-cache-dir -r requirements.txt
+
+# Now install the package itself
+RUN pip3 install --no-cache-dir .
 
 FROM python:3.10-slim-bullseye AS final
 
 ARG USER
 ARG DIR
 
-RUN apt update && apt install -y libusb-1.0-0-dev libudev-dev
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libusb-1.0-0-dev libudev-dev \
+ && rm -rf /var/lib/apt/lists/*
 
-# NOTE: Default GID == UID == 1000
+# Create a non-root user
 RUN adduser --disabled-password \
             --home "$DIR" \
             --gecos "" \
             "$USER"
 
-# Set user
 USER $USER
 
 # Make config directory
 RUN mkdir -p "$DIR/.specter/"
 
-
-# Copy over python stuff
+# Copy over installed Python environment from builder
 COPY --from=builder /usr/local/lib/python3.10 /usr/local/lib/python3.10
 COPY --from=builder /usr/local/bin /usr/local/bin
 
-
 # Expose ports
-EXPOSE 25441 25442 25443 
+EXPOSE 25441 25442 25443
 
 ENTRYPOINT ["/usr/local/bin/python3", "-m", "cryptoadvance.specter", "server", "--host", "0.0.0.0"]
