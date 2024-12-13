@@ -15,7 +15,7 @@ ENV PATH="/opt/venv/bin:$PATH"
 # Clone your project or copy it in
 # If you have your repository locally, you can use COPY instead:
 # COPY . .
-RUN git clone https://github.com/cryptoadvance/specter-desktop.git .
+RUN git clone https://github.com/cryptoadvance/specter-desktop.git specter-desktop
 WORKDIR /app/specter-desktop
 
 # Upgrade pip and install dependencies
