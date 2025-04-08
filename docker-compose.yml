@@ -269,7 +269,6 @@ volumes:
   mysql:
   electrs_data:
   lnd_data:
-  elements_data:
   lnbits_data:
   thunderhub_data:
   thubConfig.yml:
