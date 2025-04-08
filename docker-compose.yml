@@ -165,23 +165,6 @@ services:
       bitcoin:
         ipv4_address: ${SUBNET_ADDR}.8
 
-# Elements daemon for the liquid sidechain
-  elements:
-    container_name: elements
-    build:
-      context: ./Dockerfiles
-      dockerfile: Elements.Dockerfile
-    user: root
-    volumes:
-      - ./elements_data:/root/.elements/
-      - ./elements.conf:/root/.elements/elements.conf
-    restart: on-failure
-    depends_on:
-      - bitcoind
-    networks:
-      bitcoin:
-        ipv4_address: ${SUBNET_ADDR}.7
-
 # LNBits for configuration and use of your LND Node
   lnbits:
     container_name: lnbits
@@ -280,25 +263,6 @@ services:
     networks:
       bitcoin:
         ipv4_address: ${SUBNET_ADDR}.12
-  
-  spekter-desktop:
-    container_name: spekter
-    build:
-      context: ./Dockerfiles/
-      dockerfile: Specter-Desktop.Dockerfile
-    ports:
-      - 25441:25441
-      - 25442:25442
-      - 25443:25443
-    user: root
-    volumes:
-      - ./bitcoin_data:/root/.bitcoin
-    depends_on:
-      - bitcoind
-    restart: always
-    networks:
-      bitcoin:
-        ipv4_address: ${SUBNET_ADDR}.13
 
 volumes:
   bitcoin_data:
