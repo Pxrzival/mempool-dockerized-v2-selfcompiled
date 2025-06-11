@@ -3,7 +3,7 @@
 # /make/builder.Dockerfile
 # /.github/workflows/main.yml
 # /.github/workflows/release.yml
-FROM golang:1.23.6-alpine as builder
+FROM golang:1.23.10-alpine as builder
 
 # Force Go to use the cgo based DNS resolver. This is required to ensure DNS
 # queries required to connect to linked containers succeed.
@@ -12,7 +12,7 @@ ENV GODEBUG netdns=cgo
 # Pass a tag, branch or a commit using build-arg.  This allows a docker
 # image to be built from a specified Git state.  The default image
 # will use the Git tip of master by default.
-ARG checkout="master"
+ARG checkout="v0.19.0-beta"
 ARG git_url="https://github.com/lightningnetwork/lnd"
 
 # Install dependencies and build the binaries.

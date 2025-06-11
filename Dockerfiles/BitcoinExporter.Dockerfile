@@ -1,5 +1,5 @@
 # Use an Alpine image as the base
-FROM golang:1.22-alpine3.20 AS builder
+FROM golang:1.22.12-alpine3.21 AS builder
 
 
 # Install necessary packages for building and running the project
@@ -30,7 +30,7 @@ RUN go build -o bitcoind-exporter
 # Expose the port that the application will use
 EXPOSE 9999
 
-FROM alpine:3.20 AS final
+FROM alpine:3.21 AS final
 
 COPY --from=builder /app/bitcoind-exporter /usr/bin/bitcoind-exporter
 

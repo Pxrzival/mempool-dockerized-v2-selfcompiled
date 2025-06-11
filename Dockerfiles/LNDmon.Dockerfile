@@ -2,7 +2,7 @@
 # /Dockerfile
 # /tools/Dockerfile
 # /.github/workflows/main.yml
-FROM golang:1.21.6-alpine as builder
+FROM golang:1.22.12-alpine as builder
 
 # Install build dependencies such as git and glide.
 RUN apk add --no-cache git gcc musl-dev
@@ -15,7 +15,7 @@ RUN apk add --no-cache --update alpine-sdk \
 
 ENV GO111MODULE on
 #Clone the repository
-RUN git clone https://github.com/lightninglabs/lndmon.git /go/src/github.com/lightninglabs/lndmon/
+RUN git clone --branch v0.2.8 --depth 1 https://github.com/lightninglabs/lndmon.git /go/src/github.com/lightninglabs/lndmon/
 
 #Build lndmon
 RUN cd /go/src/github.com/lightninglabs/lndmon/cmd/lndmon && go build
