@@ -25,23 +25,22 @@ RUN wget https://zlib.net/zlib-1.3.1.tar.gz && \
     cd /usr/src/zlib-1.3.1; ./configure; make -j"$(($(nproc)+1))"; make -j"$(($(nproc)+1))" install
 
 # Configure the build environment and disable unnecessary features for a leaner Bitcoin build
-RUN export CONFIG_SITE=/bitcoin/depends/$(/bitcoin/depends/config.guess)/share/config.site && \
-    cd /bitcoin; ./autogen.sh; \
-    ./configure --disable-ccache \
-    --disable-maintainer-mode \
-    --disable-dependency-tracking \
-    --enable-reduce-exports --disable-bench \
-    --disable-tests \
-    --disable-gui-tests \
-    --without-gui \
-    --without-miniupnpc \
-    CFLAGS="-O2 -g0 --static -static -fPIC" \
-    CXXFLAGS="-O2 -g0 --static -static -fPIC" \
-    LDFLAGS="-s -static-libgcc -static-libstdc++ -Wl,-O2"
+RUN CMAKE_TOOLCHAIN="/bitcoin/depends/$(/bitcoin/depends/config.guess)/toolchain.cmake" && \
+    cmake -S /bitcoin -B /bitcoin/build \
+        --toolchain "${CMAKE_TOOLCHAIN}" \
+        -DBUILD_TEST=OFF \
+        -DBUILD_BENCH=OFF \
+        -DBUILD_GUI=OFF \
+        -DBUILD_GUI_TESTS=OFF \
+        -DWITH_MINIUPNPC=OFF \
+        -DREDUCE_EXPORTS=ON \
+        -DAPPEND_CFLAGS="-O2 -g0 --static -static -fPIC" \
+        -DAPPEND_CXXFLAGS="-O2 -g0 --static -static -fPIC" \
+        -DAPPEND_LDFLAGS="-s -static-libgcc -static-libstdc++ -Wl,-O2"
 
 # Compile and install Bitcoin with parallel jobs, using one more than the number of available processors
-RUN make -j"$(($(nproc)+1))" && \
-    make -j"$(($(nproc)+1))" install
+RUN cmake --build /bitcoin/build -j"$(($(nproc)+1))" && \
+    cmake --install /bitcoin/build
 
 # Stage 2: Final stage for the runtime environment
 FROM alpine:latest
