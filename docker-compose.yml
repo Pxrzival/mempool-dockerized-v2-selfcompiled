@@ -10,7 +10,7 @@ services:
       LIQUID_ENABLED: true
       MEMPOOL_WEBSITE_URL: https://mempool.hiemercloud.de
       LIQUID_WEBSITE_URL: https://liquid.hiemercloud.de
-    image: mempool/frontend:latest
+    image: mempool/frontend:v3.2.1
     user: root
     restart: on-failure
     stop_grace_period: 1m
@@ -60,7 +60,7 @@ services:
       LND_REST_API_URL: "https://${SUBNET_ADDR}.8:8080"
       LND_TIMEOUT: 1000
     
-    image: mempool/backend:latest
+    image: mempool/backend:v3.2.1
     user: root
     restart: on-failure
     stop_grace_period: 1m
@@ -87,7 +87,7 @@ services:
       MYSQL_USER: "${DB_USER}"
       MYSQL_PASSWORD: "${DB_PASS}"
       MYSQL_ROOT_PASSWORD: "${DB_ROOT_PASS}"
-    image: mariadb:10.5.21
+    image: mariadb:11.8
     user: root
     restart: on-failure
     stop_grace_period: 1m

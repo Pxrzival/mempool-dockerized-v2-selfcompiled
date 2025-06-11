@@ -1,7 +1,7 @@
 # ---------------
 # Install Dependencies
 # ---------------
-    FROM node:18.18.2-alpine AS deps
+    FROM node:22.16.0-alpine AS deps
 
     WORKDIR /app
     
@@ -14,7 +14,7 @@
       git
     
     # Clone repository
-    RUN git clone https://github.com/apotdevin/thunderhub.git .
+    RUN git clone --branch v0.13.31 --depth 1 https://github.com/apotdevin/thunderhub.git .
     #Preconfigure
     RUN npm ci
     
@@ -42,7 +42,7 @@
     # ---------------
     # Release App
     # ---------------
-    FROM node:18.18.2-alpine AS final
+    FROM node:22.16.0-alpine AS final
     
     WORKDIR /app
     

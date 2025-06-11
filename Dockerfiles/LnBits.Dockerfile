@@ -1,4 +1,4 @@
-FROM python:3.10-slim-bookworm AS builder
+FROM python:3.12-slim-bookworm AS builder
 
 RUN apt-get clean
 RUN apt-get update
@@ -7,7 +7,7 @@ RUN apt-get install -y curl pkg-config build-essential libnss-myhostname git
 RUN curl -sSL https://install.python-poetry.org | python3 -
 ENV PATH="/root/.local/bin:$PATH"
 
-RUN git clone https://github.com/lnbits/lnbits.git /app
+RUN git clone --branch v1.1.0 --depth 1 https://github.com/lnbits/lnbits.git /app
 
 WORKDIR /app
 
@@ -22,7 +22,7 @@ ENV POETRY_NO_INTERACTION=1 \
 
 RUN poetry install --only main
 
-FROM python:3.10-slim-bookworm
+FROM python:3.12-slim-bookworm
 
 # needed for backups postgresql-client version 14 (pg_dump)
 RUN apt-get update && apt-get -y upgrade && \
@@ -42,7 +42,7 @@ ENV POETRY_NO_INTERACTION=1 \
     VIRTUAL_ENV=/app/.venv \
     PATH="/app/.venv/bin:$PATH"
 
-RUN git clone https://github.com/lnbits/lnbits.git /app
+RUN git clone --branch v1.1.0 --depth 1 https://github.com/lnbits/lnbits.git /app
 
 WORKDIR /app
 
