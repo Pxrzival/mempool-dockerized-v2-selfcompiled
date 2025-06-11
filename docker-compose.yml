@@ -21,7 +21,6 @@ services:
       - bitcoind
       - lnd
       - electrs
-      - elements
     networks:
       bitcoin:
         ipv4_address: ${SUBNET_ADDR}.6
@@ -73,7 +72,6 @@ services:
       - bitcoind
       - lnd
       - electrs
-      - elements
       - db
     networks:
       bitcoin:
