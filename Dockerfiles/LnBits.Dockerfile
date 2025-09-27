@@ -2,12 +2,12 @@ FROM python:3.12-slim-bookworm AS builder
 
 RUN apt-get clean
 RUN apt-get update
-RUN apt-get install -y curl pkg-config build-essential libnss-myhostname git
+RUN apt-get install -y curl pkg-config build-essential libnss-myhostname git automake
 
 RUN curl -sSL https://install.python-poetry.org | python3 -
 ENV PATH="/root/.local/bin:$PATH"
 
-RUN git clone --branch v1.1.0 --depth 1 https://github.com/lnbits/lnbits.git /app
+RUN git clone --branch v1.2.1 --depth 1 https://github.com/lnbits/lnbits.git /app
 
 WORKDIR /app
 

@@ -6,7 +6,7 @@ RUN apk --no-cache add autoconf automake libtool boost-dev libevent-dev libffi-d
     apk --no-cache add --update alpine-sdk build-base curl
 
 # Define the Bitcoin version to build (default is version 29.0)
-ARG VERSION=29.0
+ARG VERSION=29.1
 ENV BITCOIN_VERSION=${BITCOIN_VERSION}
 
 # Clone the specific version of the Bitcoin source code from the official repository

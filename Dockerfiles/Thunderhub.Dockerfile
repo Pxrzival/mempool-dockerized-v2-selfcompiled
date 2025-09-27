@@ -14,7 +14,7 @@
       git
     
     # Clone repository
-    RUN git clone --branch v0.13.31 --depth 1 https://github.com/apotdevin/thunderhub.git .
+    RUN git clone --branch v0.14.6 --depth 1 https://github.com/apotdevin/thunderhub.git .
     #Preconfigure
     RUN npm ci
     
