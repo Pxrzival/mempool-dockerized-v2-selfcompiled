@@ -1,48 +1,43 @@
-# Base stage with Alpine Linux
-FROM alpine:3.18 AS base
+# Base stage using Debian to provide glibc and RocksDB
+FROM debian:trixie-slim AS base
 
-# Install the necessary packages for building and RocksDB
-RUN apk add --no-cache \
-    rocksdb-dev \
+RUN apt-get update -qqy \
+ && apt-get install -qqy --no-install-recommends \
+    librocksdb-dev \
     curl \
-    git
+    ca-certificates \
+    git \
+    pkg-config \
+ && rm -rf /var/lib/apt/lists/*
 
 ### Electrum Rust Server ###
 FROM base AS electrs-build
 
-# Install cargo, clang, cmake, and other build dependencies
-RUN apk add --no-cache \
+# Build dependencies and Cargo from Debian (supports Cargo.lock v4)
+RUN apt-get update -qqy \
+ && apt-get install -qqy --no-install-recommends \
     cargo \
-    clang \
-    cmake \
-    build-base \
-    linux-headers \
-    git
+    build-essential \
+    libclang-dev \
+ && rm -rf /var/lib/apt/lists/*
 
-# Set working directory and copy source code
+# Fetch source from upstream GitHub (no local COPY)
 WORKDIR /build
-
-#Clone the repositroy into the path
 RUN git clone --recurse-submodules --depth=1 https://github.com/romanz/electrs.git
-
-#Open the repositroy
 WORKDIR /build/electrs
 
-# Set environment variables for RocksDB
+# Environment for RocksDB
 ENV ROCKSDB_INCLUDE_DIR=/usr/include
 ENV ROCKSDB_LIB_DIR=/usr/lib
 
-# Build the electrs binary using Cargo
+# Build and install electrs
 RUN cargo install --locked --path .
 
-# Final stage: Copy the binary to a fresh Alpine base image
+# Final stage: thin Debian runtime with glibc
 FROM base AS result
 
 # Copy the electrs binary from the build stage
-COPY --from=electrs-build /root/.cargo/bin/* /usr/bin/
+COPY --from=electrs-build /root/.cargo/bin/electrs /usr/bin/electrs
 
-# Set the working directory (if needed)
 WORKDIR /
-
-# Default entry point (if any is needed, customize as per your requirements)
-CMD ["./usr/bin/electrs"]
+CMD ["electrs"]
