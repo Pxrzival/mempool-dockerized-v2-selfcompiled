@@ -1,7 +1,7 @@
-masterPassword: 'mempool' # Default password unless defined in account
+masterPassword: thunderhub-$2a$12$fUCu.VEHKX8OKyYfV37vkOu7rwC3tWHKxLLqAiepW8njW7UJ0IiFG
 accounts:
-  - name: 'Account 1'
-    serverUrl: '172.21.0.8:10009'
-    macaroonPath: '/data/lnd/data/chain/bitcoin/mainnet/admin.macaroon'
-    certificatePath: '/data/lnd/tls.cert'
-    password: 'mempool'
+  - name: Account 1
+    serverUrl: 172.21.0.8:10009
+    macaroonPath: /data/lnd/data/chain/bitcoin/mainnet/admin.macaroon
+    certificatePath: /data/lnd/tls.cert
+    password: thunderhub-$2a$12$ftxSgkzbCYiE1o74dC0tRevCmMeKsAiUOySFWlVwj6ADBpyZ/MKvi
