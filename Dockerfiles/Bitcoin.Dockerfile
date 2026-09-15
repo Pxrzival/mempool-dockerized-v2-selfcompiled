@@ -7,7 +7,7 @@ RUN apk --no-cache add autoconf automake libtool boost-dev libevent-dev libffi-d
 
 # Define the Bitcoin version to build (default is version 29.0)
 ARG VERSION=29.1
-ENV BITCOIN_VERSION=${BITCOIN_VERSION}
+ENV BITCOIN_VERSION=${VERSION}
 
 # Clone the specific version of the Bitcoin source code from the official repository
 RUN git clone --depth 1 https://github.com/bitcoin/bitcoin.git --branch v$VERSION --single-branch
@@ -16,23 +16,28 @@ RUN git clone --depth 1 https://github.com/bitcoin/bitcoin.git --branch v$VERSIO
 WORKDIR /bitcoin
 
 # Build the Bitcoin dependencies, excluding QT (for GUI)
-RUN cd /bitcoin/depends; make NO_QT=1
+RUN cd /bitcoin/depends && make NO_QT=1
 
-# Download, verify, and install zlib (a compression library needed for the build)
-RUN wget https://zlib.net/zlib-1.3.1.tar.gz && \
-    echo "9a93b2b7dfdac77ceba5a558a580e74667dd6fede4585b91eefb60f03b72df23  zlib-1.3.1.tar.gz" | sha256sum -c && \
-    mkdir -p /usr/src/zlib; tar zxvf zlib-1.3.1.tar.gz -C /usr/src && \
-    cd /usr/src/zlib-1.3.1; ./configure; make -j"$(($(nproc)+1))"; make -j"$(($(nproc)+1))" install
+# Download, verify, and install zlib (a compression library needed for the build).
+# Old releases are moved from zlib.net's root into its permanent fossils archive.
+ARG ZLIB_VERSION=1.3.1
+RUN wget "https://zlib.net/fossils/zlib-${ZLIB_VERSION}.tar.gz" && \
+    echo "9a93b2b7dfdac77ceba5a558a580e74667dd6fede4585b91eefb60f03b72df23  zlib-${ZLIB_VERSION}.tar.gz" | sha256sum -c && \
+    install -d /usr/src && \
+    tar xzf "zlib-${ZLIB_VERSION}.tar.gz" -C /usr/src && \
+    cd "/usr/src/zlib-${ZLIB_VERSION}" && \
+    ./configure && \
+    make -j"$(($(nproc)+1))" && \
+    make install
 
 # Configure the build environment and disable unnecessary features for a leaner Bitcoin build
 RUN CMAKE_TOOLCHAIN="/bitcoin/depends/$(/bitcoin/depends/config.guess)/toolchain.cmake" && \
     cmake -S /bitcoin -B /bitcoin/build \
         --toolchain "${CMAKE_TOOLCHAIN}" \
-        -DBUILD_TEST=OFF \
+        -DBUILD_TESTS=OFF \
         -DBUILD_BENCH=OFF \
         -DBUILD_GUI=OFF \
         -DBUILD_GUI_TESTS=OFF \
-        -DWITH_MINIUPNPC=OFF \
         -DREDUCE_EXPORTS=ON \
         -DAPPEND_CFLAGS="-O2 -g0 --static -static -fPIC" \
         -DAPPEND_CXXFLAGS="-O2 -g0 --static -static -fPIC" \
